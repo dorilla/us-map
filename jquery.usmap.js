@@ -431,8 +431,10 @@
         attrs = this.options.stateStyles;
       }
       
-      stateData.shape.animate(attrs, this.options.stateHoverAnimation);
-      
+      var $jQueryObject = $(stateData.shape.node);
+      if (!$jQueryObject.hasClass('changed')) {
+        stateData.shape.animate(attrs, this.options.stateHoverAnimation);
+      }
       
       // ... for the label backing
       if(stateData.labelBacking) {
@@ -444,7 +446,10 @@
           attrs = this.options.labelBackingStyles;
         }
         
-        stateData.labelBacking.animate(attrs, this.options.stateHoverAnimation);
+        if (!$jQueryObject.hasClass('changed')) {
+          stateData.labelBacking.animate(attrs, this.options.stateHoverAnimation);
+        }
+        
       }
     },
     
@@ -463,6 +468,20 @@
       return !this._triggerEvent('click', event, stateData);
     },
     
+    
+    /**
+     * The default click action for a state
+     */
+    _defaultClickAction: function(stateData) {
+      
+      var $jQueryObject = $(stateData.shape.node);
+      
+      if (!$jQueryObject.hasClass('changed')) 
+        $jQueryObject.addClass('changed');
+      else 
+        $jQueryObject.removeClass('changed');
+      
+    },
     
     
     /**
@@ -573,6 +592,10 @@
           
           case 'mouseout': 
             this._defaultMouseOutAction(stateData);
+            break;
+          
+          case 'click': 
+            this._defaultClickAction(stateData);
             break;
         }
       }
